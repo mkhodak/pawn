@@ -25,15 +25,13 @@ def _synset_update(synset):
 			if language == 'en':
 				setattr(synset, '_name', PWN_name)
 			else:
-				setattr(synset, '_name', 
-						data._synset2lang.get(PWN_name, _dummy+PWN_name))
+				setattr(synset, '_name', data._synset2lang.get(PWN_name, _dummy+PWN_name))
 			setattr(synset, '_language', language)
 	else:
 		PWN_name = synset._name
 		setattr(synset, '_PWN_name', PWN_name)
 		if language != 'en':
-			setattr(synset, '_name', 
-					data._synset2lang.get(PWN_name, _dummy+PWN_name))
+			setattr(synset, '_name', data._synset2lang.get(PWN_name, _dummy+PWN_name))
 		setattr(synset, _indicator, None)
 		setattr(synset, '_language', language)
 
@@ -66,9 +64,7 @@ def synsets(token, pos='anrsv'):
 	"""emulates wn.synsets"""
 	if data._language == 'en':
 		return wn.synsets(name)
-	return [wn.synset(name) 
-			for name in data._word2synsets[token] 
-			if name.split('.')[-2] in pos]
+	return [wn.synset(name) for name in data._word2synsets[token] if name.split('.')[-2] in pos]
 
 
 ###############################################################################
@@ -92,8 +88,7 @@ def _lemma(name, synset):
 def _synset_lemmas(self):
 	if data._language == 'en':
 		return self._lemmas
-	return [_lemma(name, self) 
-			for name in data._synset2lemmas.get(self.name(), [])]
+	return [_lemma(name, self) for name in data._synset2lemmas.get(self.name(), [])]
 
 
 # replacement for 'lemma_names' method of class 'Synset'
@@ -108,9 +103,7 @@ def _lexical_relation_wrapper(func):
 	def wrapper(self):
 		if data._language == 'en':
 			return func(self)
-		return sum((lemma2.synset().lemmas() 
-					for lemma1 in wn.synset(self._PWN_name)._lemmas 
-					for lemma2 in func(lemma1)), [])
+		return sum((lemma2.synset().lemmas() for lemma1 in wn.synset(self._PWN_name)._lemmas for lemma2 in func(lemma1)), [])
 	return wrapper
 
 

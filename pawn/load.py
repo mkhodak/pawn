@@ -37,14 +37,11 @@ def _load_word2synsets():
 def _load_wordcounts():
 	global _wordcounts
 	with open(_datapath+_language+'_vocab.txt', 'r') as f:
-		_wordcounts = {word: int(count) 
-					   for word, count in (line.split() for line in f)}
+		_wordcounts = {word: int(count) for word, count in (line.split() for line in f)}
 
 
 # sets dictionaries for mapping synsets between languages and synsets to lemmas
-@partial(_language_cache, names=['_synset2lemmas', 
-								 '_synset2pwn', 
-								 '_synset2lang'])
+@partial(_language_cache, names=['_synset2lemmas', '_synset2pwn', '_synset2lang'])
 def _set_synsetmaps():
 	global _synset2lemmas
 	global _synset2pwn
@@ -59,9 +56,7 @@ def _set_synsetmaps():
 	wordcounts = bool(_wordcounts)
 	for synset, lemmas in sorted(synset2lemmas.items()):
 		if wordcounts:
-			sortedlemmas = sorted(lemmas, 
-								  key=_wordcounts.__getitem__, 
-								  reverse=True)
+			sortedlemmas = sorted(lemmas, key=_wordcounts.__getitem__, reverse=True)
 		else:
 			sortedlemmas = sorted(lemmas)
 		name = '.'.join([sortedlemmas[0], synset.split('.')[-2], '01'])
@@ -71,8 +66,7 @@ def _set_synsetmaps():
 			name[-2:] = (index<10)*'0'+str(index)
 		_synset2pwn[name] = synset
 		_synset2lang[synset] = name
-		_synset2lemmas[name] = ['.'.join([name, lemma]) 
-								for lemma in sortedlemmas]
+		_synset2lemmas[name] = ['.'.join([name, lemma]) for lemma in sortedlemmas]
 
 
 # reload and reset all dictionaries
