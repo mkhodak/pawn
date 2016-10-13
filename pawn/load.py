@@ -1,5 +1,6 @@
 from collections import defaultdict
-from functools import partial, wraps
+from functools import partial
+from functools import wraps
 try:
 	import ujson as json
 except ImportError:

@@ -1,4 +1,5 @@
 from collections import defaultdict
+from functools import wraps
 from nltk.corpus import wordnet as wn
 from nltk.corpus.reader.wordnet import Lemma
 from nltk.corpus.reader.wordnet import Synset
@@ -9,6 +10,17 @@ import pawn.load as data
 
 _indicator = '_'
 _dummy = 'DUMMY~'
+
+
+# wrapper that returns PWN function output if current language is English
+def _english_wrapper(func):
+	@wraps(func)
+	def wrapper(*args, **kwargs):
+		if data._language == 'en':
+			wn.ensure_loaded()
+			return getattr(wn, func.__name__)(*args, **kwargs)
+		return func(*args, **kwargs)
+	return wrapper
 
 
 ###############################################################################
@@ -60,10 +72,9 @@ def synset(name):
 	return wn.synset(name)
 
 
+@_english_wrapper
 def synsets(token, pos='anrsv'):
 	"""emulates wn.synsets"""
-	if data._language == 'en':
-		return wn.synsets(name)
 	return [wn.synset(name) for name in data._word2synsets[token] if name.split('.')[-2] in pos]
 
 
@@ -114,11 +125,9 @@ def _lemma_count(self):
 	return len(data._word2synsets[self._name])
 
 
+@_english_wrapper
 def lemma(name):
 	"""emulates wn.lemma"""
-	if data._language == 'en':
-		return wn.lemma(name)
-
 	chunks = name.split('.')
 	i = 3
 	success = 0
@@ -135,13 +144,10 @@ def lemma(name):
 	raise WordNetError('Lemma ' + name + ' Not Found')
 
 
+@_english_wrapper
 def lemmas(token, pos='anrsv'):
 	"""emulates wn.lemmas"""
-	if data._language == 'en':
-		return wn.lemmas(token, pos)
-	return [_lemma(token, wn.synset(name)) 
-			for name in data._word2synsets[token] 
-			if name.split('.')[-2] in pos]
+	return [_lemma(token, wn.synset(name)) for name in data._word2synsets[token] if name.split('.')[-2] in pos]
 
 
 ###############################################################################
@@ -149,20 +155,17 @@ def lemmas(token, pos='anrsv'):
 ###############################################################################
 
 
+# function to wrap a method of given object with a given wrapper
 def _wrap_class_method(Object, method, wrapper, *args):
 	setattr(Object, method, wrapper(getattr(Object, method), *args))
 
 
-def all_lemma_names():
-	if data._language == 'en':
-		return wn.all_lemma_names()
-	return data._wordcounts.keys()
-
-
-def all_synsets():
-	if data._language == 'en':
-		return wn.all_synsets()
-	return (wn.synset(synset) for synset in data._synset2lemmas.keys())
+# ensures corpus has been loaded before returning function
+def _lazy_function(name):
+	def function(*args, **kwargs):
+		wn.ensure_loaded()
+		return getattr(wn, name)(*args, **kwargs)
+	return function
 
 
 _lemmas = defaultdict(lambda: defaultdict(lambda: {}))
@@ -180,9 +183,30 @@ _wrap_class_method(Lemma, 'antonyms', _lexical_relation_wrapper)
 _wrap_class_method(Lemma, 'pertainyms', _lexical_relation_wrapper)
 setattr(Lemma, 'count', _lemma_count)
 
+globals()['abspath'] = _lazy_function('abspath')
+globals()['abspaths'] = _lazy_function('abspaths')
+all_lemma_names = _english_wrapper(lambda: data._wordcounts.keys())
+all_synsets = _english_wrapper(lambda: (wn.synset(synset) for synset in data._synset2lemmas.keys()))
+globals()['citation'] = _lazy_function('citation')
+globals()['encoding'] = _lazy_function('encoding')
+globals()['fileids'] = _lazy_function('fileids')
+globals()['get_version'] = _lazy_function('get_version')
+globals()['ic'] = _lazy_function('ic')
+globals()['jcn_similarity'] = _lazy_function('jcn_similarity')
+globals()['langs'] = _lazy_function('langs')
+globals()['lch_similarity'] = _lazy_function('lch_similarity')
 lemma_count = lambda lemma: lemma.count()
+globals()['lemma_from_key'] = _lazy_function('lemma_from_key')
+globals()['license'] = _lazy_function('license')
+globals()['lin_similarity'] = _lazy_function('lin_similarity')
+globals()['morphy'] = _lazy_function('morphy')
+globals()['of2ss'] = _lazy_function('of2ss')
+globals()['open'] = _lazy_function('open')
+globals()['path_similarity'] = _lazy_function('path_similarity')
+globals()['readme'] = _lazy_function('readme')
+globals()['res_similarity'] = _lazy_function('res_similarity')
+globals()['root'] = _lazy_function('root')
+globals()['ss2of'] = _lazy_function('ss2of')
+globals()['unicode_repr'] = _lazy_function('unicode_repr')
 words = all_lemma_names
-wn.ensure_loaded()
-for attr in dir(wn):
-	if attr != '_' and not attr in globals():
-		globals()[attr] = getattr(wn, attr)
+globals()['wup_similarity'] = _lazy_function('wup_similarity')
