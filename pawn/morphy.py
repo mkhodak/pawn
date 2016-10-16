@@ -60,9 +60,10 @@ def _ru_morphy(string):
 
 class Morphy:
 
+
 	# tries to find root form of word using TreeTagger lemmatizer
 	def _treetagger_morphy(self, string):
-		return '_'.join(tag.split('\t')[-1].lower() for tag in self._tagger.tag_text(string.translate(uscore2space)))
+		return '_'.join(tag.split('\t')[-1].lower() for tag in self._tagger.tag_text(string.translate(_underscore2space)))
 
 	# tries to find root form of word using Snowball Stemmer
 	@_stringsplit_wrapper
@@ -70,21 +71,36 @@ class Morphy:
 		stemmer = self._stemmer
 		return '_'.join(stemmer.stem(token) for token in string.split())
 
+	# sets TreeTagger as the morphology analyzer
+	def _set_treetagger(self, language):
+		import treetaggerwrapper as ttw
+		self._tagger = ttw.TreeTagger(TAGLANG=language)
+		self.morphy = self._treetagger_morphy
+
+	# sets SnowballStemmer as the morphology analyzer
+	def _set_snowball(self, language):
+		from nltk.stem import SnowballStemmer
+		self._stemmer = SnowballStemmer(_langmap[language])
+		self.morphy = self._snowball_morphy
+
+	# sets custom morphology analyzer
+	def _set_morphy(self, language):
+		try:
+			self.morphy = globals()['_'+language+'_morphy']
+		except KeyError:
+			raise WordNetError('no custom morphology analyzer for ' + language + ' avaialable')
+
+
 	# determines which language and morphological analyzer to use
 	def __init__(self, language, analyzer):
 
-		if analyzer == 'treetagger':
-			import treetaggerwrapper as ttw
-			self._tagger = ttw.TreeTagger(TAGLANG=language)
-			self.morphy = self._treetagger_morphy
-		elif analyzer == 'snowball':
-			from nltk.stem import SnowballStemmer
-			self._stemmer = SnowballStemmer(_langmap[language])
-			self.morphy = self._snowball_morphy
-		elif analyzer == 'morphy':
+		if analyzer == 'auto':
 			try:
-				self.morphy = globals()['_'+language+'_morphy']
-			except KeyError:
-				raise WordNetError('no available morphology analyzer for ' + language)
+				self._set_treetagger(language)
+			except ImportError:
+				self._set_morphy(language)
 		else:
-			raise WordNetError('no morphology analyzer ' + analyzer + 'available')
+			try:
+				getattr(self, '_set_'+analyzer)(language)
+			except AttributeError:
+				raise WordNetError('no morphology analyzer ' + analyzer + 'available')

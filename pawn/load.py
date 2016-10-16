@@ -79,7 +79,7 @@ def language():
 	return _language
 
 
-def set_language(language=_language, analyzer='morphy'):
+def set_language(language=_language, analyzer='auto'):
 	"""reset language setting"""
 	global _language
 	global _morphy
