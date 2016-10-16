@@ -26,12 +26,12 @@ def _english_wrapper(func):
 @_english_wrapper
 def morphy(token):
 	"""emulates wn.morphy"""
-	if token in data._word2synsets:
-		return token
 	if ' ' in token:
 		return None
+	if token in data._words:
+		return token
 	morph = data._morphy(token)
-	if morph in data._word2synsets:
+	if morph in data._words:
 		return morph
 	return None
 
@@ -75,14 +75,12 @@ def _synset_wrapper(func, nargs):
 	return wrapper
 
 
+@_english_wrapper
 def synset(name):
 	"""emulates wn.synset"""
-	if data._language != 'en':
-		if name[:len(_dummy)] == _dummy:
-			name = name[len(_dummy):]
-		else:
-			name = data._synset2pwn[name]
-	return wn.synset(name)
+	if name[:len(_dummy)] == _dummy:
+		return wn.synset(name[len(_dummy):])
+	return wn.synset(data._synset2pwn[name])
 
 
 @_english_wrapper

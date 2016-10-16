@@ -39,8 +39,10 @@ def _load_word2synsets():
 @partial(_language_cache, names=['_wordcounts'])
 def _load_wordcounts():
 	global _wordcounts
+	global _words
 	with open(_datapath+_language+'_vocab.txt', 'r') as f:
 		_wordcounts = {word: int(count) for word, count in (line.split() for line in f)}
+	_words = set(_wordcounts.keys())
 
 
 # sets dictionaries for mapping synsets between languages and synsets to lemmas
