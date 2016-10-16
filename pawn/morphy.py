@@ -1,6 +1,7 @@
 from collections import defaultdict
 from functools import wraps
 from operator import itemgetter
+from nltk.corpus.reader.wordnet import WordNetError
 import pymorphy2
 
 
@@ -57,10 +58,6 @@ def _ru_morphy(string):
 	return string
 
 
-class MorphologyError(Exception):
-	pass
-
-
 class Morphy:
 
 	# tries to find root form of word using TreeTagger lemmatizer
@@ -88,6 +85,6 @@ class Morphy:
 			try:
 				self.morphy = globals()['_'+language+'_morphy']
 			except KeyError:
-				raise MorphologyError('no available morphology analyzer for ' + language)
+				raise WordNetError('no available morphology analyzer for ' + language)
 		else:
-			raise MorphologyError('no morphology analyzer ' + analyzer + 'available')
+			raise WordNetError('no morphology analyzer ' + analyzer + 'available')
