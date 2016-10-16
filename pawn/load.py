@@ -5,9 +5,11 @@ try:
 	import ujson as json
 except ImportError:
 	import json
+from pawn.morphy import Morphy
 
 
 _datapath = './pawn/data/'
+_langmap = {'en': 'en', 'english': 'en', 'fr': 'fr', 'french': 'fr', 'ru': 'ru', 'russian': 'ru'}
 _language = 'en'
 
 
@@ -64,17 +66,10 @@ def _set_synsetmaps():
 		index = 1
 		while name in _synset2pwn:
 			index += 1
-			name[-2:] = (index<10)*'0'+str(index)
+			name = name[:-2] + (index<10)*'0'+str(index)
 		_synset2pwn[name] = synset
 		_synset2lang[synset] = name
 		_synset2lemmas[name] = ['.'.join([name, lemma]) for lemma in sortedlemmas]
-
-
-# reload and reset all dictionaries
-def _reset():
-	_load_word2synsets()
-	_load_wordcounts()
-	_set_synsetmaps()
 
 
 def language():
@@ -82,9 +77,14 @@ def language():
 	return _language
 
 
-def set_language(language):
+def set_language(language=_language, analyzer='morphy'):
 	"""reset language setting"""
 	global _language
-	if _language != language:
-		_language = language
-		_reset()
+	global _morphy
+	if _language != _langmap[language]:
+		_language = _langmap[language]
+		_load_word2synsets()
+		_load_wordcounts()
+		_set_synsetmaps()
+	if _language != 'en':
+		_morphy = Morphy(_language, analyzer).morphy

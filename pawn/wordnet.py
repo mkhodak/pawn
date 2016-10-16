@@ -23,6 +23,19 @@ def _english_wrapper(func):
 	return wrapper
 
 
+@_english_wrapper
+def morphy(token):
+	"""emulates wn.morphy"""
+	if token in data._word2synsets:
+		return token
+	if ' ' in token:
+		return None
+	morph = data._morphy(token)
+	if morph in data._word2synsets:
+		return morph
+	return None
+
+
 ###############################################################################
 ################ Synset Wrapper, Replacement, and Access Methods ##############
 ###############################################################################
@@ -75,7 +88,10 @@ def synset(name):
 @_english_wrapper
 def synsets(token, pos='anrsv'):
 	"""emulates wn.synsets"""
-	return [wn.synset(name) for name in data._word2synsets[token] if name.split('.')[-2] in pos]
+	morph = morphy(token)
+	if morph:
+		return [wn.synset(name) for name in data._word2synsets[morph] if name.split('.')[-2] in pos]
+	return []
 
 
 ###############################################################################
@@ -147,7 +163,10 @@ def lemma(name):
 @_english_wrapper
 def lemmas(token, pos='anrsv'):
 	"""emulates wn.lemmas"""
-	return [_lemma(token, wn.synset(name)) for name in data._word2synsets[token] if name.split('.')[-2] in pos]
+	morph = morph(token)
+	if morph:
+		return [_lemma(token, wn.synset(name)) for name in data._word2synsets[morph] if name.split('.')[-2] in pos]
+	return []
 
 
 ###############################################################################
@@ -199,7 +218,6 @@ lemma_count = lambda lemma: lemma.count()
 globals()['lemma_from_key'] = _lazy_function('lemma_from_key')
 globals()['license'] = _lazy_function('license')
 globals()['lin_similarity'] = _lazy_function('lin_similarity')
-globals()['morphy'] = _lazy_function('morphy')
 globals()['of2ss'] = _lazy_function('of2ss')
 globals()['open'] = _lazy_function('open')
 globals()['path_similarity'] = _lazy_function('path_similarity')
