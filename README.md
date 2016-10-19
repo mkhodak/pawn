@@ -1,1 +1,1 @@
-# pawn
+# Princeton Automated WordNet
