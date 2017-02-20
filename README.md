@@ -26,10 +26,10 @@ LABEL	CANDIDATE_SYNSET	SYNSET_DESCRIPTION
 
 If you use the provided code or test set in academic work, please cite the following:
 
-@inproceedings{sentence,
-	author={Mikhail Khodak and Andrej Risteski and Christiane Fellbaum and Sanjeev Arora},
-	title={Automated WordNet Construction Using Word Embeddings},
-	booktitle={EACL 2017 Workshop on Sense, Concept, and Entity Representations and their Applications},
-	year=2017,
-	note={To Appear}
+@inproceedings{PAWN:17,  
+	author={Mikhail Khodak and Andrej Risteski and Christiane Fellbaum and Sanjeev Arora},  
+	title={Automated WordNet Construction Using Word Embeddings},  
+	booktitle={EACL 2017 Workshop on Sense, Concept, and Entity Representations and their Applications},  
+	year=2017,  
+	note={To Appear}  	
 }
