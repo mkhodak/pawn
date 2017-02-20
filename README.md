@@ -16,10 +16,10 @@ Russian: ru_matches.txt
 Each file has binary 0-1 labeled candidate synsets for 200 adjectives, 200 nouns, and 200 verbs in the form:
 
 INDEX	TARGET_WORD
-LABEL	CANDIDATE_SYNSET	SYNSET_DESCRIPTION
-.
-.
-.
+LABEL	CANDIDATE_SYNSET	SYNSET_DESCRIPTION  
+.  
+.  
+.  
 LABEL	CANDIDATE_SYNSET	SYNSET_DESCRIPTION
 
 # Citation
