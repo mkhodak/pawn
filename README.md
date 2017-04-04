@@ -4,7 +4,7 @@ The Princeton Automated WordNet (PAWN) is a multi-lingual (English-French-Russia
 
 The API emulates that provided for PWN by NLTK. PWN synsets that do not have corresponding synsets in French or Russian are displayed as dummy synsets in those languages. The morphological root form of words is determined by TreeTagger lemmatization if its Python wrapper (treetaggerwrapper) is available; otherwise a rough heuristical morphology is used for French and an independent morphology analyzer (pymorphy2) is used for Russian. The module is implemented for Python 3.5.3 and depends on nltk, pymorphy2, and ujson.
 
-This code is based on [Automated WordNet Construction Using Word Embeddings](http://aclweb.org/anthology/W17-1902) in the SENSE Workshop at EACL 2017 and is joint work with Andrej Risteski, Christiane Fellbaum, and Sanjeev Arora (http://unsupervised.cs.princeton.edu).
+This code is based on [Automated WordNet Construction Using Word Embeddings](http://aclweb.org/anthology/W17-1902), published in the SENSE Workshop at EACL 2017, and is joint work with Andrej Risteski, Christiane Fellbaum, and Sanjeev Arora (http://unsupervised.cs.princeton.edu).
 
 # Test Sets for Automated WordNet Construction
 
