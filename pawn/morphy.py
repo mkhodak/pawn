@@ -44,7 +44,7 @@ def _fr_morphy(string):
 @_stringsplit_wrapper
 def _ru_morphy(string):
   scores = defaultdict(lambda: 0)
-  for form in self._morph.parse(token):
+  for form in _morph.parse(string):
     if not _methods.intersection(str(method[0]) for method in form.methods_stack):
       score = form.score
       normal_form = form.normal_form
